@@ -1,14 +1,41 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState, useCallback } from "react";
+import { AnimatePresence } from "framer-motion";
+import StarryCanvas from "@/components/StarryCanvas";
+import FallingPetals from "@/components/FallingPetals";
+import IntroScene from "@/components/scenes/IntroScene";
+import PasswordScene from "@/components/scenes/PasswordScene";
+import TicTacToeScene from "@/components/scenes/TicTacToeScene";
+import BirthdayScene from "@/components/scenes/BirthdayScene";
+import ExtraScene from "@/components/scenes/ExtraScene";
+import LoveScene from "@/components/scenes/LoveScene";
+import FinalScene from "@/components/scenes/FinalScene";
 
-const Index = () => {
+const SCENES = [
+  IntroScene,
+  PasswordScene,
+  TicTacToeScene,
+  BirthdayScene,
+  ExtraScene,
+  LoveScene,
+  FinalScene,
+] as const;
+
+export default function Index() {
+  const [scene, setScene] = useState(0);
+
+  const goNext = useCallback(() => {
+    setScene((s) => Math.min(s + 1, SCENES.length - 1));
+  }, []);
+
+  const CurrentScene = SCENES[scene];
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
+    <div className="relative min-h-screen overflow-y-auto overflow-x-hidden bg-background">
+      <StarryCanvas />
+      <FallingPetals />
+      <AnimatePresence mode="wait">
+        <CurrentScene key={scene} onNext={goNext} />
+      </AnimatePresence>
     </div>
   );
-};
-
-export default Index;
+}
